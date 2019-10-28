@@ -1,4 +1,3 @@
-using AgileMethodsTestFramework.Models;
 using System.Collections.Generic;
 
 namespace AgileMethodsTestFramework.Models{
