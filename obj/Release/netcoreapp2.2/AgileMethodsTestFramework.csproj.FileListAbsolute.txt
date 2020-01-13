@@ -1,0 +1,14 @@
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\bin\Release\netcoreapp2.2\AgileMethodsTestFramework.deps.json
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\bin\Release\netcoreapp2.2\AgileMethodsTestFramework.runtimeconfig.json
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\bin\Release\netcoreapp2.2\AgileMethodsTestFramework.runtimeconfig.dev.json
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\bin\Release\netcoreapp2.2\AgileMethodsTestFramework.dll
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\bin\Release\netcoreapp2.2\AgileMethodsTestFramework.pdb
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.csprojAssemblyReference.cache
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.csproj.CoreCompileInputs.cache
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.RazorAssemblyInfo.cache
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.RazorAssemblyInfo.cs
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.AssemblyInfoInputs.cache
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.AssemblyInfo.cs
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.RazorTargetAssemblyInfo.cache
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.dll
+C:\Users\vitor\Desktop\Erasmus Classes\Agile Methods\AgileMethodsTestFramework\obj\Release\netcoreapp2.2\AgileMethodsTestFramework.pdb

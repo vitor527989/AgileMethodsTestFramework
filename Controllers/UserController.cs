@@ -10,7 +10,7 @@ using AgileMethodsTestFramework.Models;
 namespace AgileMethodsTestFramework.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] 
     public class UserController : ControllerBase
     {
         private readonly AMContext _context;
