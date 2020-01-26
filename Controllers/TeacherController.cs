@@ -27,6 +27,24 @@ namespace AgileMethodsTestFramework.Controllers
             return _context.Teachers;
         }
 
+        [HttpGet("DTO")]
+        public async Task<IActionResult> GetTeachersDTO()
+        {
+            IEnumerable<Teacher> teachers = GetTeachers();
+            List<TeacherDTO> teachersDTOs = new List<TeacherDTO>();
+            foreach (Teacher t in teachers)
+            {
+                User u = await _context.Users.FindAsync(t.IdUser);
+                TeacherDTO dto = new TeacherDTO();
+                dto.Login = u.Login;
+                dto.Password = u.Password;
+                dto.Name = u.Name;
+                dto.Office = t.Office;
+                teachersDTOs.Add(dto);
+            }
+            return Ok(teachersDTOs);
+        }
+
         // GET: api/Teacher/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTeacher([FromRoute] long id)
@@ -86,17 +104,10 @@ namespace AgileMethodsTestFramework.Controllers
         public async Task<IActionResult> PostTeacher([FromBody] Teacher Teacher)
         {
             bool guardar = true;
-            if (!ModelState.IsValid || Teacher == null || Teacher.User == null)
+            if (!ModelState.IsValid || Teacher == null)
             {
                 return BadRequest(ModelState);
             }
-            
-           /*  if(Teacher.TeacherPaiId != null){
-                Teacher pai = await _context.Teachers.FindAsync(Teacher.TeacherPaiId);
-                Dimensao dimensaoPai = await _context.Dimensoes.FindAsync(pai.IdDimensao);
-                Dimensao dimensaoFilho = await _context.Dimensoes.FindAsync(Teacher.IdDimensao);
-                guardar = dimensaoFilho.compararDimensoes(dimensaoPai);
-            } */
             
             if(guardar){
                 _context.Teachers.Add(Teacher);

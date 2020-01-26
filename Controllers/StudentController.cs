@@ -27,6 +27,24 @@ namespace AgileMethodsTestFramework.Controllers
             return _context.Students;
         }
 
+        [HttpGet("DTO")]
+        public async Task<IActionResult> GetStudentsDTO()
+        {
+            IEnumerable<Student> students = GetStudents();
+            List<StudentDTO> studentsDTOs = new List<StudentDTO>();
+            foreach (Student s in students)
+            {
+                User u = await _context.Users.FindAsync(s.IdUser);
+                StudentDTO dto = new StudentDTO();
+                dto.Login = u.Login;
+                dto.Password = u.Password;
+                dto.Name = u.Name;
+                dto.Number = s.Number;
+                studentsDTOs.Add(dto);
+            }
+            return Ok(studentsDTOs);
+        }
+
         // GET: api/Student/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStudent([FromRoute] long id)
@@ -86,17 +104,10 @@ namespace AgileMethodsTestFramework.Controllers
         public async Task<IActionResult> PostStudent([FromBody] Student Student)
         {
             bool guardar = true;
-            if (!ModelState.IsValid || Student == null || Student.User == null)
+            if (!ModelState.IsValid || Student == null)
             {
                 return BadRequest(ModelState);
             }
-            
-           /*  if(Student.StudentPaiId != null){
-                Student pai = await _context.Students.FindAsync(Student.StudentPaiId);
-                Dimensao dimensaoPai = await _context.Dimensoes.FindAsync(pai.IdDimensao);
-                Dimensao dimensaoFilho = await _context.Dimensoes.FindAsync(Student.IdDimensao);
-                guardar = dimensaoFilho.compararDimensoes(dimensaoPai);
-            } */
             
             if(guardar){
                 _context.Students.Add(Student);

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/55fa7689-23cc-4737-9caf-55668c9d794f/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/agileMethodsTestFramework",
+    "appService.deploySubpath": "publish"
+}

@@ -86,7 +86,7 @@ namespace AgileMethodsTestFramework.Controllers
         public async Task<IActionResult> PostTestResult([FromBody] TestResult TestResult)
         {
             bool guardar = true;
-            if (!ModelState.IsValid || TestResult == null || TestResult.Student == null)
+            if (!ModelState.IsValid || TestResult == null)
             {
                 return BadRequest(ModelState);
             }

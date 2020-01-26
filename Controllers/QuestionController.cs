@@ -27,6 +27,56 @@ namespace AgileMethodsTestFramework.Controllers
             return _context.Questions;
         }
 
+        [HttpGet("DTO")]
+        public async Task<IActionResult> GetQuestionsDTO()
+        {
+            IEnumerable<Question> questions = GetQuestions();
+            IEnumerable<QuestionPossibleAnswer> possibleAnswers = _context.QuestionPossibleAnswers;
+            IEnumerable<QuestionCorrectAnswer> correctAnswers = _context.QuestionCorrectAnswers;
+            IEnumerable<Answer> answers = _context.Answers;
+            List<QuestionDTO> questionsDTOs = new List<QuestionDTO>();
+            foreach (Question q in questions)
+            {
+                QuestionDTO qDto = await buildQuestionDTO(q, possibleAnswers, correctAnswers,
+                answers);
+                questionsDTOs.Add(qDto);
+            }
+            return Ok(questionsDTOs);
+        }
+
+        private async Task<QuestionDTO> buildQuestionDTO(Question q, IEnumerable<QuestionPossibleAnswer> possibleAnswers,
+        IEnumerable<QuestionCorrectAnswer> correctAnswers, IEnumerable<Answer> answers){
+            QuestionDTO dto = new QuestionDTO();
+            dto.Title = q.Title;
+            Subject s = await _context.Subjects.FindAsync(q.IdSubject); 
+            dto.Subject = s.Name;
+            foreach (QuestionPossibleAnswer qpa in possibleAnswers){
+                if (qpa.IdQuestion == q.Id){
+                    AnswerDTO ansDto = new AnswerDTO();
+                    foreach (Answer a in answers){
+                        if (a.Id == qpa.IdPossibleAnswer){
+                            ansDto.Description = a.Description;
+                            break;
+                        }
+                    }
+                    dto.PossibleAnswers.Add(ansDto);
+                }
+            }
+            foreach (QuestionCorrectAnswer qca in correctAnswers){
+                if (qca.IdQuestion == q.Id){
+                    AnswerDTO ansDto = new AnswerDTO();
+                    foreach (Answer a in answers){
+                        if (a.Id == qca.IdCorrectAnswer){
+                            ansDto.Description = a.Description;
+                            break;
+                        }
+                    }
+                    dto.CorrectAnswer = ansDto;
+                }
+            }
+            return dto;
+        }
+
         // GET: api/Question/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetQuestion([FromRoute] long id)
@@ -83,50 +133,137 @@ namespace AgileMethodsTestFramework.Controllers
 
         // POST: api/Question
         [HttpPost]
-        public async Task<IActionResult> PostQuestion([FromBody] Question Question)
+        public async Task<IActionResult> PostQuestion([FromBody] QuestionDTO question)
         {
-            bool guardar = true;
-            if (!ModelState.IsValid || Question == null || Question.Title == null)
+            if (!ModelState.IsValid || question == null || question.Title == null)
             {
                 return BadRequest(ModelState);
             }
-            
-           /*  if(Question.QuestionPaiId != null){
-                Question pai = await _context.Questions.FindAsync(Question.QuestionPaiId);
-                Dimensao dimensaoPai = await _context.Dimensoes.FindAsync(pai.IdDimensao);
-                Dimensao dimensaoFilho = await _context.Dimensoes.FindAsync(Question.IdDimensao);
-                guardar = dimensaoFilho.compararDimensoes(dimensaoPai);
-            } */
-            
-            if(guardar){
-                _context.Questions.Add(Question);
-                await _context.SaveChangesAsync();
-
-                return Ok(Question);
-            } else {
-                return BadRequest(ModelState);
+            IEnumerable<Question> questions = GetQuestions();
+            IEnumerable<Answer> answers = _context.Answers;
+            IEnumerable<Subject> subjects = _context.Subjects;
+            Question toAdd = new Question();
+            if(questions.Count() > 0){
+                foreach(Question q in questions){
+                    if(q.Title == question.Title){
+                        return BadRequest("Question Exists");
+                    }
+                }
             }
+            toAdd.Title = question.Title;
+            bool subjectExists = false;
+            if(subjects.Count() > 0){
+                foreach(Subject s in subjects){
+                    if(s.Name == question.Subject){
+                        toAdd.IdSubject = s.Id;
+                        subjectExists = true;
+                    }
+                }
+            }
+            if(!subjectExists){
+                Subject s = new Subject();
+                s.Name = question.Subject;
+                _context.Subjects.Add(s);
+            }
+            await _context.SaveChangesAsync();
+            IEnumerable<Subject> subjectsUpdated = _context.Subjects;
+            foreach(Subject s in subjects){
+                if(s.Name == question.Subject){
+                    toAdd.IdSubject = s.Id;
+                }
+            }
+            _context.Questions.Add(toAdd);
+            List<Answer> added = new List<Answer>();
+            foreach(AnswerDTO a in question.PossibleAnswers){
+                Answer aToAdd = new Answer();
+                aToAdd.Description = a.Description;
+                added.Add(aToAdd);
+                _context.Answers.Add(aToAdd);
+            }
+            await _context.SaveChangesAsync();
+            handleRelations(question, added);
+            return Ok(question);
         }
 
-        // DELETE: api/Question/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteQuestion([FromRoute] long id)
+        private async void handleRelations(QuestionDTO question, List<Answer> added){
+            IEnumerable<Question> questions = GetQuestions();
+            IEnumerable<QuestionPossibleAnswer> possibleAnswers = _context.QuestionPossibleAnswers;
+            IEnumerable<QuestionCorrectAnswer> correctAnswers = _context.QuestionCorrectAnswers;
+            IEnumerable<Answer> answers = _context.Answers;
+            IEnumerable<Subject> subjects = _context.Subjects;
+            Question questionAdded = new Question();
+            Subject subjectAdded = new Subject();
+            List<Answer> answersAdded = new List<Answer>();
+            Answer correctAnswerAdded = new Answer();
+            
+            foreach(Question q in questions){
+                if(q.Title == question.Title){
+                    questionAdded = q;
+                }
+            }
+            foreach(Subject s in subjects){
+                if(s.Name == question.Subject){
+                    subjectAdded = s;
+                }
+            }
+            foreach(Answer a in answers){
+                if(a.Description == question.CorrectAnswer.Description){
+                    correctAnswerAdded = a;
+                }
+            }
+            foreach(Answer a in added){
+                QuestionPossibleAnswer qpa = new QuestionPossibleAnswer();
+                qpa.IdPossibleAnswer = a.Id;
+                qpa.IdQuestion = questionAdded.Id;
+                _context.QuestionPossibleAnswers.Add(qpa);
+            }
+            QuestionCorrectAnswer qca = new QuestionCorrectAnswer();
+            qca.IdCorrectAnswer = correctAnswerAdded.Id;
+            qca.IdQuestion = questionAdded.Id;
+            _context.QuestionCorrectAnswers.Add(qca);
+            await _context.SaveChangesAsync();
+        }
+
+        // DELETE: api/Question/titleofquestion
+        [HttpDelete("{title}")]
+        public async Task<IActionResult> DeleteQuestion([FromRoute] string title)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || title == null)
             {
                 return BadRequest(ModelState);
             }
+            IEnumerable<Question> questions = GetQuestions();
+            IEnumerable<QuestionPossibleAnswer> possibleAnswers = _context.QuestionPossibleAnswers;
+            IEnumerable<QuestionCorrectAnswer> correctAnswers = _context.QuestionCorrectAnswers;
+            IEnumerable<Answer> answers = _context.Answers;
 
-            var Question = await _context.Questions.FindAsync(id);
-            if (Question == null)
-            {
-                return NotFound();
+            List<long> idAnswersToDelete = new List<long>();
+            Question toDelete = new Question();
+
+            foreach(Question q in questions){
+                if(q.Title == title){
+                    toDelete = q;
+                }
             }
-
-            _context.Questions.Remove(Question);
+            foreach(QuestionPossibleAnswer qpa in possibleAnswers){
+                if(qpa.IdQuestion == toDelete.Id){
+                    idAnswersToDelete.Add(qpa.IdPossibleAnswer);
+                    _context.QuestionPossibleAnswers.Remove(qpa);
+                }
+            }
+            foreach(long id in idAnswersToDelete){
+                Answer a = await _context.Answers.FindAsync(id);
+                _context.Answers.Remove(a);
+            }
+            foreach(QuestionCorrectAnswer qca in correctAnswers){
+                if(qca.IdQuestion == toDelete.Id){
+                    _context.QuestionCorrectAnswers.Remove(qca);
+                }
+            }
+            _context.Questions.Remove(toDelete);
             await _context.SaveChangesAsync();
 
-            return Ok(Question);
+            return Ok(toDelete);
         }
         private bool QuestionExists(long id)
         {

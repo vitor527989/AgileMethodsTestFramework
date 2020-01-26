@@ -10,7 +10,7 @@ using AgileMethodsTestFramework.Models;
 namespace AgileMethodsTestFramework.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController] 
+    [ApiController]
     public class UserController : ControllerBase
     {
         private readonly AMContext _context;
@@ -27,6 +27,43 @@ namespace AgileMethodsTestFramework.Controllers
             return _context.Users;
         }
 
+        [HttpGet("{username}")]
+        public async Task<IActionResult> GetUserByUsername([FromRoute] string username)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            IEnumerable<Teacher> teachers = await _context.Teachers.ToListAsync();
+            IEnumerable<Student> students = await _context.Students.ToListAsync();
+
+            foreach (Teacher t in teachers)
+            {
+                User u = await _context.Users.FindAsync(t.IdUser);
+                if (u.Login.Equals(username))
+                {
+                    UserDTO dto = new UserDTO();
+                    dto.Login = u.Login;
+                    dto.Password = u.Password;
+                    dto.Role = "Teacher";
+                    return Ok(dto);
+                }
+            }
+            foreach (Student s in students)
+            {
+                User u = await _context.Users.FindAsync(s.IdUser);
+                if (u.Login.Equals(username))
+                {
+                    UserDTO dto = new UserDTO();
+                    dto.Login = u.Login;
+                    dto.Password = u.Password;
+                    dto.Role = "Student";
+                    return Ok(dto);
+                }
+            }
+            return BadRequest("User Not Found");
+        }
         // GET: api/User/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser([FromRoute] long id)
@@ -83,29 +120,43 @@ namespace AgileMethodsTestFramework.Controllers
 
         // POST: api/User
         [HttpPost]
-        public async Task<IActionResult> PostUser([FromBody] User User)
+        public async Task<IActionResult> PostUser([FromBody] UserDTO user)
         {
-            bool guardar = true;
-            if (!ModelState.IsValid || User == null || User.Login == null)
+            if (!ModelState.IsValid || user.Login == null || user.Password == null)
             {
                 return BadRequest(ModelState);
             }
-            
-           /*  if(User.UserPaiId != null){
-                User pai = await _context.Users.FindAsync(User.UserPaiId);
-                Dimensao dimensaoPai = await _context.Dimensoes.FindAsync(pai.IdDimensao);
-                Dimensao dimensaoFilho = await _context.Dimensoes.FindAsync(User.IdDimensao);
-                guardar = dimensaoFilho.compararDimensoes(dimensaoPai);
-            } */
-            
-            if(guardar){
-                _context.Users.Add(User);
-                await _context.SaveChangesAsync();
+            IEnumerable<Teacher> teachers = await _context.Teachers.ToListAsync();
+            IEnumerable<Student> students = await _context.Students.ToListAsync();
 
-                return Ok(User);
-            } else {
-                return BadRequest(ModelState);
+            foreach (Teacher t in teachers)
+            {
+                User u = await _context.Users.FindAsync(t.IdUser);
+                if (u.Login.Equals(user.Login) &&
+                    u.Password.Equals(user.Password))
+                {
+                    UserDTO dto = new UserDTO();
+                    dto.Login = u.Login;
+                    dto.Password = u.Password;
+                    dto.Role = "Teacher";
+                    return Ok(dto);
+                }
             }
+            foreach (Student s in students)
+            {
+                User u = await _context.Users.FindAsync(s.IdUser);
+                if (u.Login.Equals(user.Login) &&
+                    u.Password.Equals(user.Password))
+                {
+                    UserDTO dto = new UserDTO();
+                    dto.Login = u.Login;
+                    dto.Password = u.Password;
+                    dto.Role = "Student";
+                    return Ok(dto);
+                }
+            }
+            return BadRequest("Invalid Credentials");
+
         }
 
         // DELETE: api/User/5
