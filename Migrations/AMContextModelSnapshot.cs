@@ -156,6 +156,10 @@ namespace AgileMethodsTestFramework.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<long>("IdQuestion");
+
+                    b.Property<long>("IdStudent");
+
                     b.Property<long>("IdTest");
 
                     b.Property<long>("IdTestAnswers");

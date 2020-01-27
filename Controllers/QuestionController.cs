@@ -50,6 +50,7 @@ namespace AgileMethodsTestFramework.Controllers
             dto.Title = q.Title;
             Subject s = await _context.Subjects.FindAsync(q.IdSubject); 
             dto.Subject = s.Name;
+            dto.PossibleAnswers = new List<AnswerDTO>();
             foreach (QuestionPossibleAnswer qpa in possibleAnswers){
                 if (qpa.IdQuestion == q.Id){
                     AnswerDTO ansDto = new AnswerDTO();

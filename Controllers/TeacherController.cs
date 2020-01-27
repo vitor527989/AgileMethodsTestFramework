@@ -31,15 +31,24 @@ namespace AgileMethodsTestFramework.Controllers
         public async Task<IActionResult> GetTeachersDTO()
         {
             IEnumerable<Teacher> teachers = GetTeachers();
+            IEnumerable<SubjectUser> subjectUsers = _context.SubjectsUsers;
             List<TeacherDTO> teachersDTOs = new List<TeacherDTO>();
             foreach (Teacher t in teachers)
             {
                 User u = await _context.Users.FindAsync(t.IdUser);
+                SubjectUser temp = new SubjectUser();
+                foreach(SubjectUser su in subjectUsers){
+                    if(su.IdUser == u.Id){
+                        temp = su;
+                    }
+                }
                 TeacherDTO dto = new TeacherDTO();
                 dto.Login = u.Login;
                 dto.Password = u.Password;
                 dto.Name = u.Name;
                 dto.Office = t.Office;
+                Subject s = await _context.Subjects.FindAsync(temp.IdSubject);
+                dto.Subject = s.Name;
                 teachersDTOs.Add(dto);
             }
             return Ok(teachersDTOs);

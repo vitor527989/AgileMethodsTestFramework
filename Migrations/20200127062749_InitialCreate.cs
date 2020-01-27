@@ -137,7 +137,9 @@ namespace AgileMethodsTestFramework.Migrations
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     IdTest = table.Column<long>(nullable: false),
-                    IdTestAnswers = table.Column<long>(nullable: false)
+                    IdQuestion = table.Column<long>(nullable: false),
+                    IdTestAnswers = table.Column<long>(nullable: false),
+                    IdStudent = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {

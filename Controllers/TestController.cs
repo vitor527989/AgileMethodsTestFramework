@@ -127,8 +127,9 @@ namespace AgileMethodsTestFramework.Controllers
         }
 
         // GET: api/Test/GenerateTest
-        [HttpGet("GenerateTest")]
-        public async Task<IActionResult> GenerateTest(string subject, int nQuestions, string login)
+        [HttpGet("GenerateTest/{subject}/{nQuestions}/{login}")]
+        public async Task<IActionResult> GenerateTest([FromRoute] string subject, 
+        [FromRoute] int nQuestions, [FromRoute] string login)
         {
             if (!ModelState.IsValid || subject == null || nQuestions == 0)
             {
@@ -176,6 +177,7 @@ namespace AgileMethodsTestFramework.Controllers
             t.IdTeacher = await getIdTeacher(login);
             _context.Tests.Add(t);
             await _context.SaveChangesAsync();
+            
             foreach(Question q in questionsTest){
                 TestQuestion tq = new TestQuestion();
                 tq.IdQuestion = q.Id;
@@ -186,7 +188,7 @@ namespace AgileMethodsTestFramework.Controllers
                 test.questions.Add(qDto);
             }
             await _context.SaveChangesAsync();
-
+            
             return Ok(test);
         }
 

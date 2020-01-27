@@ -4,5 +4,6 @@ namespace AgileMethodsTestFramework.Models{
         public string Password{get;set;}
         public string Name{get;set;}
         public int Number{get;set;}
+        public string Subject{get;set;}
     }
 }

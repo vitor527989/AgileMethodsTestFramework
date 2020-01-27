@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgileMethodsTestFramework.Migrations
 {
     [DbContext(typeof(AMContext))]
-    [Migration("20200125171310_InitialCreate")]
+    [Migration("20200127062749_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,6 +157,10 @@ namespace AgileMethodsTestFramework.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<long>("IdQuestion");
+
+                    b.Property<long>("IdStudent");
 
                     b.Property<long>("IdTest");
 
