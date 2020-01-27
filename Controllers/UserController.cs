@@ -158,6 +158,24 @@ namespace AgileMethodsTestFramework.Controllers
             return BadRequest("Invalid Credentials");
 
         }
+        [HttpPost("Post")]
+        public async Task<IActionResult> AddUser([FromBody] User user)
+        {
+            bool guardar = true;
+            if (!ModelState.IsValid || user == null)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            if(guardar){
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(user);
+            } else {
+                return BadRequest(ModelState);
+            }
+        }
 
         // DELETE: api/User/5
         [HttpDelete("{id}")]

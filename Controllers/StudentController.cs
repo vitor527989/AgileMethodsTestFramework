@@ -259,7 +259,7 @@ namespace AgileMethodsTestFramework.Controllers
         }
 
         [HttpGet("CheckGrades/{number}")]
-        private async Task<IActionResult> checkGrades([FromRoute] int number){
+        public async Task<IActionResult> checkGrades([FromRoute] int number){
             IEnumerable<Student> students = GetStudents();
             IEnumerable<TestResult> testResults = _context.TestResults;
 
@@ -268,6 +268,7 @@ namespace AgileMethodsTestFramework.Controllers
             long studentId = 0;
             foreach(Student s in students){
                 if(s.Number == number){
+                    student = s;
                     studentId = s.Id;
                     break;
                 }
